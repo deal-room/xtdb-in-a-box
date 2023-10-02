@@ -1,0 +1,44 @@
+{;; Source code directory
+ :paths ["src"]
+
+  
+ :deps {;; Core and required dependencies
+        org.clojure/clojure {:mvn/version "1.10.1"}
+        com.xtdb/xtdb-core {:mvn/version "1.24.1"}
+        com.xtdb/xtdb-kafka {:mvn/version "1.24.1"}
+        com.xtdb/xtdb-kafka-embedded {:mvn/version "1.24.1"} ; In-Process Kafka Node (For Development)
+        com.xtdb/xtdb-http-server {:mvn/version "1.24.1"} ; HTTP API (https://docs.xtdb.com/extensions/1.24.1/http/) 
+        com.xtdb/xtdb-rocksdb {:mvn/version "1.24.1"}
+        com.xtdb/xtdb-metrics {:mvn/version "1.24.1"}
+        ;; Optional:
+        com.xtdb/xtdb-sql {:mvn/version "1.24.1"} ; SQL Extension (https://docs.xtdb.com/extensions/1.24.1/sql/)
+        com.xtdb/xtdb-lucene {:mvn/version "1.24.1"} ; Full-Text Search (https://docs.xtdb.com/extensions/1.24.1/full-text-search/)
+        }
+
+  ;; Aliases and tasks
+ :aliases {:repl {;; Initialize namespace for REPL
+                  :extra-deps {
+                               org.clojure/clojure {:mvn/version "1.10.1"}
+                               cider/cider-nrepl {:mvn/version "0.30.0"}
+                  }
+                  :main-opts ["-m" "config.db"]
+                  ;:main-opts ["-m" "xtdb-in-a-box.db" "-r"] 
+                  }
+
+
+    ;; Alias specific for JDK 16+
+           :jdk16+ {:jvm-opts [;; Required for JDK 16 and 17:
+        ;; https://github.com/xtdb/xtdb/issues/1462
+                               "--add-opens=java.base/java.util.concurrent=ALL-UNNAMED"]
+      ;; Environment variables
+      ;; XTDB SHA1 workaround for JDK 17 on MacOS
+                    :env-vars {:XTDB_ENABLE_BYTEUTILS_SHA1 "true"}}
+
+    ;; Alias specific for logging
+           :logging {:extra-deps {;; Logging:
+                            org.clojure/tools.logging {:mvn/version "1.1.0"}
+                            ch.qos.logback/logback-classic {:mvn/version "1.2.3"}
+                            ch.qos.logback/logback-core {:mvn/version "1.2.3"}
+                            org.slf4j/slf4j-api {:mvn/version "1.7.30"}}
+                     :jvm-opts [;; Logging
+                                "-Dclojure.tools.logging.factory=clojure.tools.logging.impl/slf4j-factory"]}}}
